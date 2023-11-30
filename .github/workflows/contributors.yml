@@ -23,9 +23,9 @@ jobs:
           echo "::set-output name=contributors::$contributors"
       - name: Debug Contributors
         run: |
-          for contributor in ${{ steps.contributors.outputs.contributors }}; do
-            echo "Contributor: $contributor"
-          done
+            echo "Contributors List:"
+            echo "${{ steps.contributors.outputs.contributors }}"
+          
 
       - name: Update README
         run: |
