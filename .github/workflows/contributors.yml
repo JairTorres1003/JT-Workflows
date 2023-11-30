@@ -21,10 +21,14 @@ jobs:
         run: |
           contributors=$(curl -s https://api.github.com/repos/JairTorres1003/JT-Workflows/contributors | jq -r '.[].login')
           echo "::set-output name=contributors::$contributors"
+      - name: Debug Contributors
+        run: |
+          for contributor in ${{ steps.contributors.outputs.contributors }}; do
+            echo "Contributor: $contributor"
+          done
 
       - name: Update README
         run: |
-          sed -i '/## Contributors/q' README.md
           echo "## Contributors" >> README.md
           for contributor in ${{ steps.contributors.outputs.contributors }}; do
             avatar_url=$(curl -s https://api.github.com/users/$contributor | jq -r '.avatar_url')
