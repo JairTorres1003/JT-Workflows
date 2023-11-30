@@ -9,7 +9,8 @@ jobs:
   contributors:
     runs-on: ubuntu-latest
     steps:
-      - uses: wow-actions/contributors-list@v1
+      - name: Contributors List
+        uses: wow-actions/contributors-list@v1.2.0
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           userNameHeight: 19
