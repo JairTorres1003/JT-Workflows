@@ -1,10 +1,10 @@
 name: Contributors
 on:
   schedule:
-    - cron: '15 10 * * *'
-  push:
-    branches:
-      - master
+    - cron: '30 13 1,15 * *'
+  # allows to manually run the job at any time
+  workflow_dispatch:
+
 jobs:
   contributors:
     runs-on: ubuntu-latest
@@ -13,3 +13,12 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           svgPath: CONTRIBUTORS.svg
+          includeBots: false
+          userNameHeight: 19
+          itemTemplate: >
+            <g transform="translate({{ x }}, {{ y }})">
+              <a xlink:href="{{{ url }}}" class="contributor-link" target="_blank" rel="nofollow sponsored" title="{{{ name }}}" id="{{{ name }}}">
+                <image width="{{ width }}" height="{{ height }}" xlink:href="{{{ avatar }}}" />
+                <text x="32" y="74" text-anchor="middle" alignment-baseline="middle" font-size="10">{{{ name }}}</text>
+              </a>
+            </g>
