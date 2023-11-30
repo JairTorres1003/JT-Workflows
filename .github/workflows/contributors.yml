@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: wow-actions/contributors-list@v1.2.0
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN || secrets.SNAKE_TOKEN_PROFILE }}
+          GITHUB_TOKEN: ${{ secrets.SNAKE_TOKEN_PROFILE }}
           svgPath: CONTRIBUTORS.svg
           includeBots: false
           userNameHeight: 19
