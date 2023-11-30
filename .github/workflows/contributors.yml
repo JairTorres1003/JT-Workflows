@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Get Contributors
         id: contributors
@@ -27,6 +27,13 @@ jobs:
             avatar_url=$(curl -s https://api.github.com/users/$contributor | jq -r '.avatar_url')
             echo "![${contributor}](${avatar_url}&s=100&border-radius=50%)" >> README.md
           done
+
+      - name: Debug Information
+        run: |
+          echo "GitHub Repository: ${GITHUB_REPOSITORY}"
+          echo "GitHub Token: ${GITHUB_TOKEN}"
+          git status
+          git remote -v
 
       - name: Commit and Push Changes
         run: |
