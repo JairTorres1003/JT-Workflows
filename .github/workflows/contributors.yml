@@ -1,15 +1,15 @@
 name: Update Contributors
 
 on:
-  schedule:
-    - cron: '30 13 1,15 * *'
   workflow_dispatch:
+
+  repository_dispatch:
+    types: [update-contributors]
 
 jobs:
   update-contributors:
     permissions:
       contents: write
-
     runs-on: ubuntu-latest
 
     steps:
@@ -28,7 +28,7 @@ jobs:
           echo "## Contributors" >> README.md
           for contributor in ${{ steps.contributors.outputs.contributors }}; do
             avatar_url=$(curl -s https://api.github.com/users/$contributor | jq -r '.avatar_url')
-            echo "![${contributor}](${avatar_url}&s=100&border-radius=50%)" >> README.md
+            echo "<a href='https://github.com/$contributor'><img src='${avatar_url}&s=100' alt='${contributor}' width='40' height='40' style='border-radius:50%'></a> ${contributor}" >> README.md
           done
 
       - name: Debug Information
