@@ -1,7 +1,7 @@
 name: Contributors
 on:
   schedule:
-    - cron: '30 13 1,15 * *'
+    - cron: '15 10 * * *'
   push:
     branches:
       - master
@@ -9,15 +9,7 @@ jobs:
   contributors:
     runs-on: ubuntu-latest
     steps:
-      - name: Contributors List
-        uses: wow-actions/contributors-list@v1.2.0
+      - uses: wow-actions/contributors-list@v1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          userNameHeight: 19
-          itemTemplate: >
-            <g transform="translate({{ x }}, {{ y }})">
-              <a xlink:href="{{{ url }}}" class="contributor-link" target="_blank" rel="nofollow sponsored" title="{{{ name }}}" id="{{{ name }}}">
-                <image width="{{ width }}" height="{{ height }}" xlink:href="{{{ avatar }}}" />
-                <text x="32" y="74" text-anchor="middle" alignment-baseline="middle" font-size="10">{{{ name }}}</text>
-              </a>
-            </g>
+          svgPath: CONTRIBUTORS.svg
