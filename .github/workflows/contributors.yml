@@ -9,6 +9,7 @@ jobs:
   update-contributors:
     permissions:
       contents: write
+
     runs-on: ubuntu-latest
 
     steps:
