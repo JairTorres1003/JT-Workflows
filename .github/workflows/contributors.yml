@@ -20,7 +20,7 @@ jobs:
         id: contributors
         run: |
           contributors=$(curl -s https://api.github.com/repos/JairTorres1003/JT-Workflows/contributors | jq -r '.[].login')
-          echo "contributors=$contributors" >> $GITHUB_ENV
+          echo "::set-output name=contributors::$contributors"
 
       - name: Update README
         run: |
