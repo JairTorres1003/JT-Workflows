@@ -19,7 +19,7 @@ jobs:
       - name: Get Contributors
         id: contributors
         run: |
-          contributors=$(curl -s https://api.github.com/repos/JairTorres1003/JT-Workflows/contributors | jq -r '.[].login')
+          contributors=$(curl -s https://api.github.com/repos/JairTorres1003/JT-Workflows/contributors | jq '.')
           echo "::set-output name=contributors::$contributors"
       - name: Debug Contributors
         run: |
