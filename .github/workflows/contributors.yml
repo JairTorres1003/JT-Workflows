@@ -1,24 +1,45 @@
-name: Contributors
+name: Update Contributors
+
 on:
   schedule:
     - cron: '30 13 1,15 * *'
-  # allows to manually run the job at any time
   workflow_dispatch:
-
+  
 jobs:
-  contributors:
+  update-contributors:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: wow-actions/contributors-list@v1
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          svgPath: CONTRIBUTORS.svg
-          includeBots: false
-          userNameHeight: 19
-          itemTemplate: >
-            <g transform="translate({{ x }}, {{ y }})">
-              <a xlink:href="{{{ url }}}" class="contributor-link" target="_blank" rel="nofollow sponsored" title="{{{ name }}}" id="{{{ name }}}">
-                <image width="{{ width }}" height="{{ height }}" xlink:href="{{{ avatar }}}" />
-                <text x="32" y="74" text-anchor="middle" alignment-baseline="middle" font-size="10">{{{ name }}}</text>
-              </a>
-            </g>
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '14'
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Update Contributors
+      run: node update-contributors.js
+
+    - name: Commit and Push Changes
+      run: |
+        git config --local user.email "actions@github.com"
+        git config --local user.name "GitHub Actions"
+        git add README.md
+        git commit -m "Update Contributors [skip ci]"
+        git push
+
+    - name: Update Contributors Image
+      run: |
+        for contributor in $(curl -s https://api.github.com/repos/tu-usuario/tu-repositorio/contributors | jq -r '.[].login'); do
+          avatar_url=$(curl -s "https://api.github.com/users/$contributor" | jq -r '.avatar_url')
+          wget -O "$contributor.jpg" "$avatar_url"
+          convert "$contributor.jpg" -resize 100x100^ -gravity center -extent 100x100 -alpha set -background none -define png:color-type=6 "$contributor.png"
+          sed -i "s|@${contributor}@|![${contributor}](${contributor}.png)|g" README.md
+        done
+        git add README.md
+        git commit -m "Update Contributors Images [skip ci]"
+        git push
