@@ -28,7 +28,7 @@ jobs:
           echo "## Contributors" >> README.md
           for contributor in ${{ steps.contributors.outputs.contributors }}; do
             avatar_url=$(curl -s https://api.github.com/users/$contributor | jq -r '.avatar_url')
-            echo "<a href='https://github.com/$contributor' target='_blank'><img src='${avatar_url}&s=100' alt='${contributor}' width='40' height='40' style='border-radius:50%;'></a>" >> README.md
+            echo "<a href='https://github.com/$contributor' target='_blank'><img src='https://images.weserv.nl/?url=${avatar_url}?h=100&w=100&mask=circle' alt='${contributor}' width='40' height='40'></a> " >> README.md
           done
 
       - name: Commit and Push Changes
