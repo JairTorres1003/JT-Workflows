@@ -22,25 +22,6 @@ jobs:
           contributors=$(curl -s https://api.github.com/repos/JairTorres1003/JT-Workflows/contributors | jq -c '.')
           echo "CONTRIBUTORS=$contributors" >> "$GITHUB_OUTPUT"
 
-      - name: Update README
-        env:
-          CONTRIBUTORS: ${{ steps.find-specific-word.outputs.CONTRIBUTORS }}
+      - name: debug
         run: |
-          echo "## Contributors" >> README.md
-          
-          for contributor in $(echo "$CONTRIBUTORS" | jq -c '.[]'); do
-            avatar_url=$(echo "$contributor" | jq -r '.avatar_url')
-            avatar_name=$(echo "$contributor" | jq -r '.login')
-            echo "$avatar_name"
-            echo "<a href='https://github.com/$avatar_name' target='_blank'><img src='https://images.weserv.nl/?url=$avatar_url&h=100&w=100&mask=circle' alt='$avatar_name' width='40' height='40'></a> " >> README.md
-          done
-
-      - name: Commit and Push Changes
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"
-          git add README.md
-          git commit -m "Update Contributors"
-          git push https://$GITHUB_TOKEN@github.com/${{ github.repository }}.git HEAD:main
+          echo $CONTRIBUTORS
