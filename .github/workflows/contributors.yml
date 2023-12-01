@@ -45,6 +45,9 @@ jobs:
           # Update the content between the specified markers
           awk '/<!-- ALL-CONTRIBUTORS-LIST:START -->/{p=1;print;system("cat README.md.tmp")} /<!-- ALL-CONTRIBUTORS-LIST:END -->/{p=0} !p' README.md > README.updated && mv README.updated README.md
 
+          # Ensure changes are detected and staged
+          git add README.md
+
       - name: Clean up
         run: |
           rm README.md.tmp
