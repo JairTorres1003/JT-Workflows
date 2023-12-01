@@ -29,13 +29,16 @@ jobs:
           echo "## Contributors" > README.md.tmp
 
           for contributor in $(echo $RESPONSE | jq -r '.[] | @base64'); do
+            # Helper function to decode base64 and parse JSON
             _jq() {
               echo ${contributor} | base64 --decode | jq -r ${1}
             }
 
+            # Get the username and avatar url
             username=$(_jq '.login')
             avatar_url=$(_jq '.avatar_url')
 
+            # Add the contributor to the README
             echo "<a href='https://github.com/$username' target='_blank'><img src='https://images.weserv.nl/?url=$avatar_url&h=100&w=100&mask=circle' alt='$username' title='$username' width='40' height='40' /></a> " >> README.md.tmp
           done
 
