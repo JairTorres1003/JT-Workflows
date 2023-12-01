@@ -19,20 +19,20 @@ jobs:
       - name: Get Contributors
         id: contributors
         run: |
-          contributors=$(curl -s https://api.github.com/repos/JairTorres1003/JT-Workflows/contributors | jq '.')
+          contributors=$(curl -s https://api.github.com/repos/JairTorres1003/JT-Workflows/contributors | jq -c '.')
           echo "::set-output name=contributors::$contributors"
+
       - name: Debug Contributors
         run: |
-            echo "Contributors List:"
-            echo "${{ steps.contributors.outputs.contributors }}"
-          
+          echo "Contributors List:"
+          echo "${{ steps.contributors.outputs.contributors }}"
 
       - name: Update README
         run: |
           echo "## Contributors" >> README.md
-          for contributor in ${{ steps.contributors.outputs.contributors }}; do
-            avatar_url=$(curl -s https://api.github.com/users/$contributor | jq -r '.avatar_url')
-            echo "<a href='https://github.com/$contributor' target='_blank'><img src='https://images.weserv.nl/?url=${avatar_url}?h=100&w=100&mask=circle' alt='${contributor}' width='40' height='40'></a> " >> README.md
+          for contributor in $(echo "${{ steps.contributors.outputs.contributors }}" | jq -c '.[]'); do
+            avatar_url=$(echo "$contributor" | jq -r '.avatar_url')
+            echo "<a href='https://github.com/$(echo "$contributor" | jq -r '.login')' target='_blank'><img src='https://images.weserv.nl/?url=${avatar_url}&h=100&w=100&mask=circle' alt='$(echo "$contributor" | jq -r '.login')' width='40' height='40'></a> " >> README.md
           done
 
       - name: Commit and Push Changes
