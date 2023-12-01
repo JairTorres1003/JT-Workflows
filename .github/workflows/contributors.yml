@@ -26,4 +26,12 @@ jobs:
         env:
           RESPONSE: ${{ steps.contributors.outputs.CONTRIBUTORS }}
         run: |
-          echo "$RESPONSE"
+          for contributor in $RESPONSE; do
+            # Get the username of the contributor
+            username=$(echo $contributor | jq -r '.login')
+            # Get the avatar url of the contributor
+            avatar_url=$(echo $contributor | jq -r '.avatar_url')
+
+            echo "Username: $username"
+            echo "Avatar URL: $avatar_url"
+          done
