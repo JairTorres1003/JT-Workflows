@@ -30,9 +30,9 @@ jobs:
 
           for contributor in $RESPONSE; do
             # Get the username of the contributor
-            username=$(echo $contributor | jq -r '.[].login')
+            username=$(echo $contributor | jq -r '.["login"]')
             # Get avatar url of the contributor
-            avatar_url=$(echo $contributor | jq -r '.[].avatar_url')
+            avatar_url=$(echo $contributor | jq -r '.["avatar_url"]')
 
             echo "<a href='https://github.com/$username' target='_blank'><img src='https://images.weserv.nl/?url=$avatar_url&h=100&w=100&mask=circle' alt='$username' title='$username' width='40' height='40' /></a> " >> README.md
           done
