@@ -30,7 +30,7 @@ jobs:
           for contributor in $(echo "${CONTRIBUTORS}" | jq -c '.[]'); do
             avatar_url=$(echo "$contributor" | jq -r '.avatar_url')
             avatar_name=$(echo "$contributor" | jq -r '.login')
-            echo ${avatar_name}
+            echo $avatar_name
             echo "<a href='https://github.com/${avatar_name}' target='_blank'><img src='https://images.weserv.nl/?url=${avatar_url}&h=100&w=100&mask=circle' alt='${avatar_name}' width='40' height='40'></a> " >> README.md
           done
 
