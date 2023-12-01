@@ -45,9 +45,6 @@ jobs:
           # Update the content between the specified markers
           awk '/<!-- ALL-CONTRIBUTORS-LIST:START -->/{p=1;print;system("cat README.md.tmp")} /<!-- ALL-CONTRIBUTORS-LIST:END -->/{p=0} !p' README.md > README.updated && mv README.updated README.md
 
-          # Ensure changes are detected and staged
-          git add README.md
-
       - name: Clean up
         run: |
           rm README.md.tmp
@@ -58,6 +55,13 @@ jobs:
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
+
+          # Check if there are any changes
+          if git diff --quiet README.md; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
           git add README.md
           git commit -m "Update Contributors"
           git push https://$GITHUB_TOKEN@github.com/${{ github.repository }}.git HEAD:main
