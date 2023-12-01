@@ -18,8 +18,19 @@ jobs:
       - name: Get Contributors
         id: contributors
         run: |
-          contributors=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/JairTorres1003/JT-Workflows/contributors | jq -c '.')
+          GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          
+          contributors=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            https://api.github.com/repos/JairTorres1003/JT-Workflows/contributors | jq -c '.')
+
+          # Check if the request was successful
+          if [[ $? -ne 0 || -z "$contributors" ]]; then
+            echo "Error: Unable to get contributors from GitHub API"
+            exit 1
+          fi
+          
           echo $contributors
+          # Set the output variable for use by other jobs
           echo "CONTRIBUTORS=$contributors" >> "$GITHUB_OUTPUT"
 
       - name: Update README.md
