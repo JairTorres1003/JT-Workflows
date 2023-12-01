@@ -19,9 +19,11 @@ jobs:
         id: contributors
         run: |
           GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          REPO_OWNER="${{ github.repository_owner }}"
+          REPO_NAME="${{ github.repository }}"
           
           contributors=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            https://api.github.com/repos/JairTorres1003/JT-Workflows/contributors | jq -c '.')
+            https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contributors | jq -c '.')
 
           # Check if the request was successful
           if [[ $? -ne 0 || -z "$contributors" ]]; then
