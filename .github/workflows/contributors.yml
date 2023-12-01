@@ -26,12 +26,9 @@ jobs:
         env:
           CONTRIBUTORS: ${{ steps.find-specific-word.outputs.CONTRIBUTORS }}
         run: |
-          results=$(cat "$CONTRIBUTORS")
-          echo "$results"
-
           echo "## Contributors" >> README.md
           
-          for contributor in $(echo "$results" | jq -c '.[]'); do
+          for contributor in $(echo "$CONTRIBUTORS" | jq -c '.[]'); do
             avatar_url=$(echo "$contributor" | jq -r '.avatar_url')
             avatar_name=$(echo "$contributor" | jq -r '.login')
             echo "$avatar_name"
