@@ -21,7 +21,7 @@ jobs:
           GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
           REPO_OWNER="${{ github.repository_owner }}"
           REPO_NAME="${{ github.repository }}"
-          
+
           contributors=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
             https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contributors | jq -c '.')
 
@@ -30,8 +30,10 @@ jobs:
             echo "Error: Unable to get contributors from GitHub API"
             exit 1
           fi
-          
+
           echo $contributors
+          echo $REPO_OWNER
+          echo $REPO_NAME
           # Set the output variable for use by other jobs
           echo "CONTRIBUTORS=$contributors" >> "$GITHUB_OUTPUT"
 
