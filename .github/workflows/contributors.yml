@@ -23,5 +23,7 @@ jobs:
           echo "CONTRIBUTORS=$contributors" >> "$GITHUB_OUTPUT"
 
       - name: debug
+        env:
+          RESPONSE: ${{ steps.contributors.outputs.CONTRIBUTORS }}
         run: |
-          echo $CONTRIBUTORS
+          echo "$RESPONSE"
