@@ -19,6 +19,7 @@ jobs:
         id: contributors
         run: |
           contributors=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/JairTorres1003/JT-Workflows/contributors | jq -c '.')
+          echo $contributors
           echo "CONTRIBUTORS=$contributors" >> "$GITHUB_OUTPUT"
 
       - name: Update README.md
