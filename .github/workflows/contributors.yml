@@ -19,18 +19,18 @@ jobs:
       - name: Get Contributors
         id: contributors
         run: |
-          contributors=$(curl -s https://api.github.com/repos/JairTorres1003/JT-Workflows/contributors | jq -c '.[]')
+          contributors=$(curl -s https://api.github.com/repos/JairTorres1003/JT-Workflows/contributors | jq -c '.')
           echo "CONTRIBUTORS=$contributors" >> "$GITHUB_OUTPUT"
 
       - name: debug
         env:
           RESPONSE: ${{ steps.contributors.outputs.CONTRIBUTORS }}
         run: |
-          for contributor in $RESPONSE; do
+          for contributor in "${RESPONSE[@]}"; do
             # Get the username of the contributor
-            username=$(echo $contributor | jq -r '.login')
+            username=$(echo "$contributor" | jq -r '.login')
             # Get the avatar url of the contributor
-            avatar_url=$(echo $contributor | jq -r '.avatar_url')
+            avatar_url=$(echo "$contributor" | jq -r '.avatar_url')
 
             echo "Username: $username"
             echo "Avatar URL: $avatar_url"
