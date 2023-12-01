@@ -2,7 +2,6 @@ name: Update Contributors
 
 on:
   workflow_dispatch: # Manually trigger the workflow
-
   schedule:
     - cron: '30 13 1,15 * *' # Run on the 1st and 15th day of each month at 13:30 UTC
 
@@ -23,10 +22,11 @@ jobs:
           echo "CONTRIBUTORS=$contributors" >> "$GITHUB_OUTPUT"
 
       - name: Update README.md
+        id: update-readme
         env:
           RESPONSE: ${{ steps.contributors.outputs.CONTRIBUTORS }}
         run: |
-          echo "## Contributors" > README.md
+          echo "## Contributors" > README.md.tmp
 
           for contributor in $(echo $RESPONSE | jq -r '.[] | @base64'); do
             _jq() {
@@ -36,8 +36,11 @@ jobs:
             username=$(_jq '.login')
             avatar_url=$(_jq '.avatar_url')
 
-            echo "<a href='https://github.com/$username' target='_blank'><img src='https://images.weserv.nl/?url=$avatar_url&h=100&w=100&mask=circle' alt='$username' title='$username' width='40' height='40' /></a> " >> README.md
+            echo "<a href='https://github.com/$username' target='_blank'><img src='https://images.weserv.nl/?url=$avatar_url&h=100&w=100&mask=circle' alt='$username' title='$username' width='40' height='40' /></a> " >> README.md.tmp
           done
+
+          # Update the content between the specified markers
+          awk '/<!-- ALL-CONTRIBUTORS-LIST:START -->/{p=1;print;system("cat README.md.tmp")} /<!-- ALL-CONTRIBUTORS-LIST:END -->/{p=0} !p' README.md > README.updated && mv README.updated README.md
 
       - name: Commit and Push Changes
         env:
