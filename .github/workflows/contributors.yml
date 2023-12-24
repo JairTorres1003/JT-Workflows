@@ -38,7 +38,9 @@ jobs:
         env:
           RESPONSE: ${{ steps.contributors.outputs.CONTRIBUTORS }}
         run: |
+          echo "" > README.md.tmp
           echo "## Contributors" > README.md.tmp
+          echo "" > README.md.tmp
 
           for contributor in $(echo $RESPONSE | jq -r '.[] | @base64'); do
             # Helper function to decode base64 and parse JSON
