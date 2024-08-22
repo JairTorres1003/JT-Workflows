@@ -1,0 +1,91 @@
+name: Template Setup
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  get_current_step:
+    name: Check if first run
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - id: check_flag
+        run: |
+          echo "FLAG=$(cat ./.github/steps/flag)" >> $GITHUB_OUTPUT
+
+      - id: check_template
+        run: |
+          echo "IS_TEMPLATE=${{ github.event.repository.is_template }}" >> $GITHUB_OUTPUT
+    outputs:
+      IS_TEMPLATE: ${{ steps.check_template.outputs.IS_TEMPLATE }}
+      FLAG: ${{ steps.check_flag.outputs.FLAG }}
+
+  on_start:
+    name: Prepare repository
+    needs: get_current_step
+    env:
+      IS_TEMPLATE: ${{ needs.get_current_step.outputs.IS_TEMPLATE }}
+      FLAG: ${{ needs.get_current_step.outputs.FLAG }}
+    if: ${{ needs.get_current_step.outputs.IS_TEMPLATE == 'false' && needs.get_current_step.outputs.FLAG == 'REPOSITORY_INITIALIZED=' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Debug IS_TEMPLATE and FLAG values
+        run: |
+          echo "IS_TEMPLATE=$IS_TEMPLATE"
+          echo "FLAG=$FLAG"
+
+      - name: Configure files
+        run: |
+          project_name=$(basename $GITHUB_REPOSITORY | sed 's/[^a-zA-Z0-9]/ /g')
+          repo_name=$(basename $GITHUB_REPOSITORY)
+          repo_name_package=$(basename $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')
+
+          if [ "$FLAG" == "REPOSITORY_INITIALIZED=$repo_name" ]; then
+            echo "Repository already initialized, skipping..."
+            exit 0
+          fi
+
+          files_to_replace=(
+            "package.json"
+            "package-lock.json"
+            "README.md"
+          )
+
+          for file in "${files_to_replace[@]}"; do
+            if [ -f "$file" ]; then
+              echo "Modificando $file"
+              sed -i "s/{{project_name}}/$project_name/g" "$file"
+              sed -i "s/{{repo_name}}/$repo_name/g" "$file"
+              sed -i "s/repo_name_package/$repo_name_package/g" "$file"
+            else
+              echo "File $file not found, skipping..."
+            fi
+          done
+
+          # Modify keywords in package.json
+          jq --arg new_keywords "$(echo $project_name | tr ' ' '\n')" '
+            .keywords += ($new_keywords | split("\n") | unique)
+          ' package.json > package.json.tmp && mv package.json.tmp package.json
+
+          echo "REPOSITORY_INITIALIZED=$repo_name" > ./.github/steps/flag
+
+      - name: Prepare Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add .
+          git commit -m "Prepare repository"
+          git push
