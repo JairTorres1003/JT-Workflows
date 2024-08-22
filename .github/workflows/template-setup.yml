@@ -75,9 +75,13 @@ jobs:
           done
 
           # Modify keywords in package.json
-          jq --arg new_keywords "$(echo $project_name | tr ' ' '\n')" '
-            .keywords += ($new_keywords | split("\n") | unique)
-          ' package.json > package.json.tmp && mv package.json.tmp package.json
+          if [ -f "package.json" ]; then
+            jq --arg new_keywords "$(echo $project_name | tr ' ' '\n')" '
+              .keywords += ($new_keywords | split("\n") | unique)
+            ' package.json > package.json.tmp && mv package.json.tmp package.json
+          else
+            echo "File package.json not found, skipping..."
+          fi
 
           echo "REPOSITORY_INITIALIZED=$repo_name" > ./.github/steps/flag
 
